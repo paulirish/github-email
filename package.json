@@ -14,8 +14,14 @@
     "cli"
   ],
   "author": "Paul Irish",
-  "contributors": [{
-    "name": "Sindre Sorhus"
-  }],
-  "license": "MIT"
+  "contributors": [
+    {
+      "name": "Sindre Sorhus",
+      "name": "Zoro Z."
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "get-email-address-from-npm-username": "^1.1.0"
+  }
 }

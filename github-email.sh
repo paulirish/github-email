@@ -1,12 +1,55 @@
-#!/bin/bash
-# Created by Sindre Sorhus
-# Magically retrieves a GitHub users email even though it's not publicly shown
+#!/usr/bin/env bash
+# -----------------------------------------------------------------------------
+# Name    : github-email
+# Purpose : Retrieve a GitHub user's email even though it's not public
+#
+# 
+# Based on: https://gist.github.com/sindresorhus/4512621
+# Revised here: https://gist.github.com/cryptostrophe/11234026
+# Now maintained in this repo.
+# -----------------------------------------------------------------------------
 
-[ "$1" = "" ] && echo "usage: $0 <GitHub username> [<repo>]" && exit 1
+if [[ $# -eq 0 ]]; then
+    printf "Usage: %s username [repository]\n" "$(basename "$0")" >&2
+    exit 1
+fi
 
-[ "$2" = "" ] && repo=`curl "https://api.github.com/users/$1/repos?type=owner&sort=updated" -s | sed -En 's|"name": "(.+)",|\1|p' | tr -d ' ' | head -n 1` || repo=$2
+user="$1"
+repo="$2"
 
-curl "https://api.github.com/repos/$1/$repo/commits" -s | sed -En 's|"(email\|name)": "(.+)",?|\2|p' | tr -s ' ' | paste - - | sort -u -k 1,1
+echo "## Public email"
+curl "https://api.github.com/users/$user" -s \
+        | sed -nE 's#^.*"email": "([^"]+)",.*$#\1#p' 
 
-# `paste - -`      remove every other linebreak
-# `sort -u -k1,1`  only show unique lines based on first column (email)
+
+echo
+echo "## Email from npm"
+if [ command -v get-email-address-from-npm-username >/dev/null 2>&1 ]; then
+	npm install get-email-address-from-npm-username --global
+fi
+get-email-address-from-npm-username $user
+
+
+echo
+echo "## Emails from recent commits"
+curl "https://api.github.com/users/$user/events" -s \
+    | sed -nE 's#^.*"(email)": "([^"]+)",.*$#\2#p' \
+    | sort -u
+
+
+echo
+echo "## Emails from owned repo recent activity"
+if [[ -z $repo ]]; then
+	# get all owned repos
+    repo="$(curl "https://api.github.com/users/$user/repos?type=owner&sort=updated" -s \
+        | sed -nE 's#^.*"name": "([^"]+)",.*fork$#\1#p' \
+        | head -n1)"
+fi
+
+curl "https://api.github.com/repos/$user/$repo/commits" -s \
+    | sed -nE 's#^.*"(email|name)": "([^"]+)",.*$#\2#p' \
+    | paste - - \
+    | sort -u
+
+
+
