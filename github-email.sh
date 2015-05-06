@@ -14,37 +14,37 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 
-function log(){
-	faded='\033[1;30m'
-	clear='\033[0m' 
-	printf "\n${faded}$1${clear}\n" 
+log() {
+    faded='\033[1;30m'
+    clear='\033[0m'
+    printf "\n${faded}$1${clear}\n"
 }
 
 
 user="$1"
 repo="$2"
 
-log "Email on github"
+log 'Email on GitHub'
 curl "https://api.github.com/users/$user" -s \
-        | sed -nE 's#^.*"email": "([^"]+)",.*$#\1#p'
+    | sed -nE 's#^.*"email": "([^"]+)",.*$#\1#p'
 
 
-log "Email on npm"
+log 'Email on npm'
 if [ command -v get-email-address-from-npm-username >/dev/null 2>&1 ]; then
 	npm install get-email-address-from-npm-username --global
 fi
 get-email-address-from-npm-username $user
 
 
-log "Emails from recent commits"
+log 'Emails from recent commits'
 curl "https://api.github.com/users/$user/events" -s \
     | sed -nE 's#^.*"(email)": "([^"]+)",.*$#\2#p' \
     | sort -u
 
 
-log "Emails from owned-repo recent activity"
+log 'Emails from owned-repo recent activity'
 if [[ -z $repo ]]; then
-	# get all owned repos
+    # get all owned repos
     repo="$(curl "https://api.github.com/users/$user/repos?type=owner&sort=updated" -s \
         | sed -nE 's#^.*"name": "([^"]+)",.*$#\1#p' \
         | head -n1)"
@@ -54,6 +54,3 @@ curl "https://api.github.com/repos/$user/$repo/commits" -s \
     | sed -nE 's#^.*"(email|name)": "([^"]+)",.*$#\2#p' \
     | paste - - \
     | sort -u
-
-
-
