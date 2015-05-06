@@ -1,6 +1,6 @@
 {
   "name": "github-email",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Magically retrieves a GitHub users email even though it's not publicly shown",
   "bin": {
     "github-email": "github-email.sh"
@@ -16,7 +16,6 @@
   "author": "Paul Irish",
   "contributors": [
     {
-      "name": "Sindre Sorhus",
       "name": "Zoro Z."
     }
   ],
