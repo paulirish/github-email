@@ -3,7 +3,7 @@
 # Name    : github-email
 # Purpose : Retrieve a GitHub user's email even though it's not public
 #
-# 
+#
 # Based on: https://gist.github.com/sindresorhus/4512621
 # Revised here: https://gist.github.com/cryptostrophe/11234026
 # Now maintained in this repo.
@@ -14,35 +14,39 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 
+function log(){
+	faded='\033[1;30m'
+	clear='\033[0m' 
+	printf "\n${faded}$1${clear}\n" 
+}
+
+
 user="$1"
 repo="$2"
 
-echo "## Public email"
+log "Email on github"
 curl "https://api.github.com/users/$user" -s \
-        | sed -nE 's#^.*"email": "([^"]+)",.*$#\1#p' 
+        | sed -nE 's#^.*"email": "([^"]+)",.*$#\1#p'
 
 
-echo
-echo "## Email from npm"
+log "Email on npm"
 if [ command -v get-email-address-from-npm-username >/dev/null 2>&1 ]; then
 	npm install get-email-address-from-npm-username --global
 fi
 get-email-address-from-npm-username $user
 
 
-echo
-echo "## Emails from recent commits"
+log "Emails from recent commits"
 curl "https://api.github.com/users/$user/events" -s \
     | sed -nE 's#^.*"(email)": "([^"]+)",.*$#\2#p' \
     | sort -u
 
 
-echo
-echo "## Emails from owned repo recent activity"
+log "Emails from owned-repo recent activity"
 if [[ -z $repo ]]; then
 	# get all owned repos
     repo="$(curl "https://api.github.com/users/$user/repos?type=owner&sort=updated" -s \
-        | sed -nE 's#^.*"name": "([^"]+)",.*fork$#\1#p' \
+        | sed -nE 's#^.*"name": "([^"]+)",.*$#\1#p' \
         | head -n1)"
 fi
 
