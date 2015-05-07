@@ -1,6 +1,6 @@
 {
   "name": "github-email",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Magically retrieves a GitHub users email even though it's not publicly shown",
   "bin": {
     "github-email": "github-email.sh"
