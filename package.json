@@ -5,10 +5,7 @@
   "bin": {
     "github-email": "github-email.sh"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/paulirish/github-email.git"
-  },
+  "repository": "paulirish/github-email",
   "keywords": [
     "github",
     "cli"
@@ -19,5 +16,8 @@
       "name": "Zoro Z."
     }
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "npm-email": "^1.0.0"
+  }
 }
