@@ -30,7 +30,7 @@ curl "https://api.github.com/users/$user" -s \
 
 
 log 'Email on npm'
-if [ command -v get-email-address-from-npm-username >/dev/null 2>&1 ]; then
+if [ hash get-email-address-from-npm-username >/dev/null 2>&1 ]; then
 	npm install get-email-address-from-npm-username --global
 fi
 get-email-address-from-npm-username $user
