@@ -24,15 +24,18 @@ log() {
 user="$1"
 repo="$2"
 
+sourceFile=$(node -e "console.log(require('fs').realpathSync('$0'))")
+sourceDir=$(dirname $sourceFile)
+
 log 'Email on GitHub'
 curl "https://api.github.com/users/$user" -s \
     | sed -nE 's#^.*"email": "([^"]+)",.*$#\1#p'
 
 
 log 'Email on npm'
-npmEmail="./node_modules/.bin/npm-email"
+npmEmail="$sourceDir/node_modules/.bin/npm-email"
 if [ ! -f $npmEmail ]; then
-	npm install >/dev/null
+	(cd $sourceDir && npm install >/dev/null)
 fi
 eval $npmEmail $user
 
