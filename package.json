@@ -5,6 +5,7 @@
   "bin": {
     "github-email": "github-email.sh"
   },
+  "preferGlobal": true,
   "repository": "paulirish/github-email",
   "keywords": [
     "github",
@@ -17,7 +18,4 @@
     }
   ],
   "license": "MIT",
-  "dependencies": {
-    "npm-email": "^1.0.0"
-  }
 }
