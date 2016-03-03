@@ -38,7 +38,6 @@ else
 fi
 
 
-
 log 'Emails from recent commits'
 curl "https://api.github.com/users/$user/events" -s \
     | sed -nE 's#^.*"(email)": "([^"]+)",.*$#\2#p' \
