@@ -17,15 +17,13 @@ fi
 log() {
     faded='\033[1;30m'
     clear='\033[0m'
-    printf "\n${faded}$1${clear}\n"
+    printf "\n%b$1%b\n" "$faded" "$clear"
 }
 
 
 user="$1"
 repo="$2"
 
-sourceFile=$(node -e "console.log(require('fs').realpathSync('$0'))")
-sourceDir=$(dirname $sourceFile)
 
 log 'Email on GitHub'
 curl "https://api.github.com/users/$user" -s \
@@ -33,11 +31,12 @@ curl "https://api.github.com/users/$user" -s \
 
 
 log 'Email on npm'
-npmEmail="$sourceDir/node_modules/.bin/npm-email"
-if [ ! -f $npmEmail ]; then
-	(cd $sourceDir && npm install >/dev/null)
+if hash jq 2>/dev/null; then
+    curl "https://registry.npmjs.org/-/user/org.couchdb.user:$user" -s | jq -r '.email'
+else
+    echo " … skipping …. Please: brew install jq"
 fi
-eval $npmEmail $user
+
 
 
 log 'Emails from recent commits'
@@ -55,6 +54,6 @@ if [[ -z $repo ]]; then
 fi
 
 curl "https://api.github.com/repos/$user/$repo/commits" -s \
-    | sed -nE 's#^.*"(email|name)": "([^"]+)",.*$#\2#p' \
-    | paste - - \
+    | sed -nE 's#^.*"(email|name)": "([^"]+)",.*$#\2#p'  \
+    | pr -2 -at \
     | sort -u
