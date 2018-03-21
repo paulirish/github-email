@@ -13,24 +13,27 @@ if [[ $# -eq 0 ]]; then
     printf "Usage: %s username [repository]\n" "$(basename "$0")" >&2
     exit 1
 fi
+clear='\033[0m'
 
-log() {
-    faded='\033[1;30m'
-    clear='\033[0m'
-    printf "\n%b$1%b\n" "$faded" "$clear"
+fade() {
+    faded='\033[30m'
+    printf "%b$1%b\n" "$faded" "$clear"
 }
 
+header() {
+    pink='\033[1;35m'
+    printf "\n%b$1%b\n" "$pink" "$clear"
+}
 
 user="$1"
 repo="$2"
 
 
-log 'Email on GitHub'
+header 'Email on GitHub'
 curl "https://api.github.com/users/$user" -s \
     | sed -nE 's#^.*"email": "([^"]+)",.*$#\1#p'
 
-
-log 'Email on npm'
+header 'Email on npm'
 if hash jq 2>/dev/null; then
     curl "https://registry.npmjs.org/-/user/org.couchdb.user:$user" -s | jq -r '.email'
 else
@@ -38,13 +41,13 @@ else
 fi
 
 
-log 'Emails from recent commits'
+header 'Emails from recent commits'
 curl "https://api.github.com/users/$user/events" -s \
     | sed -nE 's#^.*"(email)": "([^"]+)",.*$#\2#p' \
     | sort -u
 
 
-log 'Emails from owned-repo recent activity'
+header 'Emails from owned-repo recent activity'
 if [[ -z $repo ]]; then
     # get all owned repos
     repo="$(curl "https://api.github.com/users/$user/repos?type=owner&sort=updated" -s \
