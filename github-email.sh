@@ -65,5 +65,5 @@ fi
 
 curl "https://api.github.com/repos/$user/$repo/commits" -s \
     | sed -nE 's#^.*"(email|name)": "([^"]+)",.*$#\2#p'  \
-    | pr -2 -at \
+    | pr -2 -at -w 85 \
     | sort -u
