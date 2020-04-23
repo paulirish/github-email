@@ -45,7 +45,7 @@ header 'Email on npm'
 if hash jq 2>/dev/null; then
     curl "https://registry.npmjs.org/-/user/org.couchdb.user:$user" -s | jq -r '.email'
 else
-    echo " … skipping …. Please: brew install jq"
+    echo " … skipping …. Please: brew install jq (on OSX) OR apt install jq (on Linux)"
 fi
 
 
