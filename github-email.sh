@@ -37,7 +37,7 @@ if [ -z $GH_EMAIL_TOKEN ]; then
     fade "       export GH_EMAIL_TOKEN=<token>"
     fade "   You'll also want to add that line to your shell configuration (e.g. .bashrc)"
 else
-    curl "https://api.github.com/users/$user?access_token=$GH_EMAIL_TOKEN" -s \
+    curl -H "Authorization: token $GH_EMAIL_TOKEN" "https://api.github.com/users/$user" --silent \
         | sed -nE 's#^.*"email": "([^"]+)",.*$#\1#p'
 fi
 
