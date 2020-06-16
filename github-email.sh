@@ -50,7 +50,7 @@ fi
 
 
 header 'Emails from recent commits'
-curl "https://api.github.com/users/$user/events" -s \
+curl -H "Authorization: token $GH_EMAIL_TOKEN" "https://api.github.com/users/$user/events" -s \
     | sed -nE 's#^.*"(email)": "([^"]+)",.*$#\2#p' \
     | sort -u
 
@@ -58,12 +58,12 @@ curl "https://api.github.com/users/$user/events" -s \
 header 'Emails from owned-repo recent activity'
 if [[ -z $repo ]]; then
     # get all owned repos
-    repo="$(curl "https://api.github.com/users/$user/repos?type=owner&sort=updated" -s \
+    repo="$(curl -H "Authorization: token $GH_EMAIL_TOKEN" "https://api.github.com/users/$user/repos?type=owner&sort=updated" -s \
         | sed -nE 's#^.*"name": "([^"]+)",.*$#\1#p' \
         | head -n1)"
 fi
 
-curl "https://api.github.com/repos/$user/$repo/commits" -s \
+curl -H "Authorization: token $GH_EMAIL_TOKEN" "https://api.github.com/repos/$user/$repo/commits" -s \
     | sed -nE 's#^.*"(email|name)": "([^"]+)",.*$#\2#p'  \
     | pr -2 -at -w 85 \
     | sort -u
