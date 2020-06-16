@@ -15,11 +15,6 @@ if [[ $# -eq 0 ]]; then
 fi
 clear='\033[0m'
 
-fade() {
-    faded='\033[30m'
-    printf "%b$1%b\n" "$faded" "$clear"
-}
-
 header() {
     pink='\033[1;35m'
     printf "\n%b$1%b\n" "$pink" "$clear"
@@ -31,11 +26,11 @@ repo="$2"
 
 header 'Email on GitHub'
 if [ -z $GH_EMAIL_TOKEN ]; then
-    fade "   Github requires authenticated API requests to retrieve the email. See: https://git.io/vxctz"
-    fade "   To enable, open https://github.com/settings/tokens/new?description=github-email …"
-    fade "   Keep the checkboxes unchecked, hit 'Generate token', copy the token, then run this in your shell:"
-    fade "       export GH_EMAIL_TOKEN=<token>"
-    fade "   You'll also want to add that line to your shell configuration (e.g. .bashrc)"
+    echo "   Github requires authenticated API requests to retrieve the email. See: https://git.io/vxctz"
+    echo "   To enable, open https://github.com/settings/tokens/new?description=github-email …"
+    echo "   Keep the checkboxes unchecked, hit 'Generate token', copy the token, then run this in your shell:"
+    echo "       export GH_EMAIL_TOKEN=<token>"
+    echo "   You'll also want to add that line to your shell configuration (e.g. .bashrc)"
 else
     curl -H "Authorization: token $GH_EMAIL_TOKEN" "https://api.github.com/users/$user" --silent \
         | sed -nE 's#^.*"email": "([^"]+)",.*$#\1#p'
